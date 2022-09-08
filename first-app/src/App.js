@@ -16,14 +16,16 @@ function RobotSay() {
 function WhoSay(props) {
   const { message } = props;
 
-  return <div className={message.isOwner ? 'owner' : 'companion'}>
+  return <div className={message.isOwner ? 'owner' : 'companion'} >
     <div className='chat-user_name'>{message.user}</div>
     <div className='chat-user_text'> {message.text} </div>
     <div className='chat-user_time'>{message.time}</div>
   </div>;
 }
 
-
+function getId(List) {
+  return List.length ? List[List.length - 1].id + 1 : 0
+}
 
 const Chatter = React.forwardRef((props, ref) => {
   const List = props.messageList;
@@ -33,7 +35,7 @@ const Chatter = React.forwardRef((props, ref) => {
     <h1> Болталка </h1>
     <div className='chat' ref={ref} >
       {List.map((mes) =>
-        <WhoSay message={mes} />)}
+        <WhoSay message={mes} key={mes.id} />)}
     </div>
   </>;
 })
@@ -56,6 +58,7 @@ function updateMessageList(messages, message, user) {
   let hours = time.getHours();
   let min = time.getMinutes();
   let mes = {
+    id: getId(messages),
     user: user,
     text: message,
     time: `${hours}:${min}`,
