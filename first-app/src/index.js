@@ -4,13 +4,15 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-let userName = 'Иван';
+let userName = prompt('Введите ваше имя');
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+console.log(userName);
 root.render(
-  <React.StrictMode>
-    <App name={userName} />
-  </React.StrictMode>
+  // <React.StrictMode>
+
+  <App userName={userName} />
+  // {/* </React.StrictMode> */ }
 );
 
 // If you want to start measuring performance in your app, pass a function
