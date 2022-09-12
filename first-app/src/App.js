@@ -1,7 +1,39 @@
 
-import './App.sass';
+// import './App.sass';
+import Form from './Form';
+import Chatter from './Chatter';
+import ChatList from './ChatList';
+import { Box, styled } from '@mui/material';
+
 import React, { useState, useEffect, useRef } from 'react';
-const chat = React.createRef();
+
+const CHATLIST = [{
+  id: 'J1',
+  name: 'Boris Johnson'
+},
+{
+  id: 'T1',
+  name: 'Lis Truss '
+},
+{
+  id: 'B11',
+  name: 'Geek Brains'
+}];
+
+const APP = styled(Box)`
+display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  background-color: #fff4df;
+  color: cadetblue;
+  height: 100vh;
+  padding: 20px;
+
+`
+function getId(List) {
+  return List.length ? List[List.length - 1].id + 1 : 0
+}
 
 function RobotSay() {
   const speech = [
@@ -12,46 +44,7 @@ function RobotSay() {
   return speech[n];
 }
 
-
-function WhoSay(props) {
-  const { message } = props;
-
-  return <div className={message.isOwner ? 'owner' : 'companion'} >
-    <div className='chat-user_name'>{message.user}</div>
-    <div className='chat-user_text'> {message.text} </div>
-    <div className='chat-user_time'>{message.time}</div>
-  </div>;
-}
-
-function getId(List) {
-  return List.length ? List[List.length - 1].id + 1 : 0
-}
-
-const Chatter = React.forwardRef((props, ref) => {
-  const List = props.messageList;
-  // const chat = useRef(null);
-
-  return <>
-    <h1> Болталка </h1>
-    <div className='chat' ref={ref} >
-      {List.map((mes) =>
-        <WhoSay message={mes} key={mes.id} />)}
-    </div>
-  </>;
-})
-
-function Form(props) {
-  return (
-    <form onSubmit={props.onSubmit} className='chatter'>
-      <textarea className='App-textarea'>
-      </textarea>
-      <button type='submit'>Отправить</button>
-    </form>
-  );
-}
-
 function updateMessageList(messages, message, user) {
-
   let isOwner = true;
   if (user === 'robot') isOwner = false
   let time = new Date();
@@ -70,26 +63,30 @@ function updateMessageList(messages, message, user) {
   return messages
 }
 
-
-function App(props) {
+export default function App(props) {
   console.log('app init');
   const user = props.userName;
   const [messageList, setMessageList] = useState([]);
+  const [chatList, setCatList] = useState(CHATLIST);
   const chat = useRef(null);
+  const text = useRef(null);
 
   useEffect(() => {
     if (messageList.length > 0) {
       if (messageList[messageList.length - 1].user !== 'robot') {
-        var idTimeOut = setTimeout(() =>
-          setMessageList(updateMessageList(messageList, RobotSay(), 'robot'))
-          , 1000);
+        var idTimeOut = setTimeout(() => {
+          setMessageList(updateMessageList(messageList, RobotSay(), 'robot')); text.current.focus();
+        }
+          , 1500);
       }
       setTimeout(() => {
         chat.current.scrollTop = chat.current.scrollHeight;
       }, 0)
     }
+
     return () => {
       clearTimeout(idTimeOut);
+
     }
   }, [messageList]
   );
@@ -106,9 +103,16 @@ function App(props) {
 
 
   return (
-    <div className="App">
-      <Chatter ref={chat} messageList={messageList} />
-      <Form onSubmit={handleSubmit} />
+    <div style={{
+      display: 'flex',
+      justifyContent: 'center',
+      gap: 20
+    }}>
+      <ChatList chats={chatList} />
+      <APP component='div'>
+        <Chatter ref={chat} messageList={messageList} />
+        <Form ref={text} onSubmit={handleSubmit} />
+      </APP>
     </div>
   );
 }
@@ -116,4 +120,4 @@ function App(props) {
 
 
 
-export default App;
+
