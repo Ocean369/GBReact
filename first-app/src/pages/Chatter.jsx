@@ -4,18 +4,18 @@ import { Typography, Box, styled } from '@mui/material';
 import { makeStyles, createStyles } from '@mui/styles';
 
 const useStyles = makeStyles(createStyles({
-    chat: {
-        width: '300px',
-        height: '500px',
-        border: '2px double grey',
-        borderRadius: '5px',
-        backgroundColor: 'rgb(168, 236, 208)',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '5px',
-        padding: '10px 3px',
-        overflow: 'auto',
-    }
+  chat: {
+    width: '300px',
+    height: '500px',
+    border: '2px double grey',
+    borderRadius: '5px',
+    backgroundColor: 'rgb(168, 236, 208)',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '5px',
+    padding: '10px 3px',
+    overflow: 'auto',
+  }
 }));
 
 const Owner = styled(Box)`
@@ -93,46 +93,44 @@ const Companion = styled(Box)`
 
 function WhoSay(props) {
 
-    const { message } = props;
-    console.log(message.isOwner ? Owner : Companion);
+  const { message } = props;
+  const WHO = message.isOwner ? Owner : Companion;
 
-    const WHO = message.isOwner ? Owner : Companion;
+  return < WHO component='div' >
 
-    return < WHO component='div' >
-
-        <Box component='div' sx={{
-            fontSize: '18px',
-            color: 'blue',
-            alignSelf: `${message.isOwner ? 'flex-end' : 'flex-start'} `
-        }}
-        >{message.user}</Box>
-        <Box component='div' sx={{
-            fontSize: '16px',
-        }}> {message.text} </Box>
-        <Box component='div' sx={{
-            fontSize: '10px',
-            color: 'black',
-            alignSelf: 'flex-end'
-        }}>{message.time}</Box>
-    </ WHO >;
+    <Box component='div' sx={{
+      fontSize: '18px',
+      color: 'blue',
+      alignSelf: `${message.isOwner ? 'flex-end' : 'flex-start'} `
+    }}
+    >{message.user}</Box>
+    <Box component='div' sx={{
+      fontSize: '16px',
+    }}> {message.text} </Box>
+    <Box component='div' sx={{
+      fontSize: '10px',
+      color: 'black',
+      alignSelf: 'flex-end'
+    }}>{message.time}</Box>
+  </ WHO >;
 }
 
 
 
 const Chatter = React.forwardRef((props, ref) => {
-    const List = props.messageList;
+  const List = props.messageList;
+  const title = props.title;
+  const classes = useStyles();
 
-    const classes = useStyles();
-
-    return <>
-        <Typography variant="h3" color="secondary.title">
-            Болталка
-        </Typography>
-        <Box component='div' className={classes.chat} ref={ref} >
-            {List.map((mess) =>
-                <WhoSay message={mess} key={mess.id} />)}
-        </Box>
-    </>;
+  return <>
+    <Typography variant="h3" color="secondary.title">
+      {title}
+    </Typography>
+    <Box component='div' className={classes.chat} ref={ref} >
+      {List.map((mess) =>
+        <WhoSay message={mess} key={mess.id} />)}
+    </Box>
+  </>;
 })
 
 export default Chatter;
