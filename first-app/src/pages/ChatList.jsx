@@ -23,7 +23,12 @@ function Item(props) {
     let path = `/chat/${chat.name.split(/\s+/).join('')}`;
 
     return <>
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div
+            style={{
+                display: 'flex',
+                gap: '10px',
+                justifyContent: 'space-between'
+            }}>
             <Link to={path} style={{
                 textDecoration: 'none',
                 color: 'gray'
@@ -38,7 +43,9 @@ function Item(props) {
                     </ListItemText>
                 </ListItem>
             </Link>
-            <Button onClick={() => props.onClick(chat.id)}><DeleteIcon /></Button>
+            <Button onClick={() => props.onClick(chat.id)}
+                sx={{ justifySelf: 'end' }}
+            ><DeleteIcon /></Button>
         </div>
         <Box>
             {(index < length - 1) ?
@@ -63,7 +70,8 @@ const ChatList = React.forwardRef((props, ref) => {
                     alignItems: 'center',
                     justifyContent: 'end'
                 }}>
-                <Button variant="outlined"
+                <Button
+                    variant="text"
                     sx={{ width: '20px' }}
                     type='submit' >
                     {<AddIcon />}
