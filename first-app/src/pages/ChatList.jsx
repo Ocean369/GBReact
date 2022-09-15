@@ -3,12 +3,13 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Divider from '@mui/material/Divider';
 import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
+import { ListItemAvatar, ListItemButton, ListItemIcon } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import React, { useState, useEffect, useRef } from 'react';
 import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, TextField } from '@mui/material';
 import { Link } from "react-router-dom";
 import Chat from './Chat'
@@ -21,23 +22,30 @@ function Item(props) {
     const { chat, length, index } = props;
     let path = `/chat/${chat.name.split(/\s+/).join('')}`;
 
-    return <Link to={path} style={{
-        textDecoration: 'none',
-        color: 'gray'
-    }}>
-        <ListItem alignItems="center" >
-            <ListItemAvatar>
-                <Avatar alt={chat.name} src="/static/images/avatar/l1.jpg" />
-            </ListItemAvatar>
-            <ListItemText
-                primary={chat.name}
-            />
-        </ListItem>
+    return <>
+        <div style={{ display: 'flex', gap: '10px' }}>
+            <Link to={path} style={{
+                textDecoration: 'none',
+                color: 'gray'
+            }}>
+                <ListItem alignItems="center" >
+                    <ListItemAvatar>
+                        <Avatar alt={chat.name} src="/static/images/avatar/l1.jpg" />
+                    </ListItemAvatar>
+                    <ListItemText
+                        primary={chat.name}
+                    >
+                    </ListItemText>
+                </ListItem>
+            </Link>
+            <Button onClick={() => props.onClick(chat.id)}><DeleteIcon /></Button>
+        </div>
         <Box>
             {(index < length - 1) ?
                 <Divider variant="inset" component="li" /> : ''}
         </Box>
-    </Link>
+    </>
+
 }
 
 const ChatList = React.forwardRef((props, ref) => {
@@ -75,7 +83,7 @@ const ChatList = React.forwardRef((props, ref) => {
 
             {chatList.map((chat, index) => {
                 return <div key={chat.id}>
-                    <Item chat={chat} length={length} index={index} />
+                    <Item chat={chat} length={length} index={index} onClick={props.onClick} />
                 </div>
             })}
         </List>

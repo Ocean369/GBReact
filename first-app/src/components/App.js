@@ -36,6 +36,12 @@ export default function App(props) {
     updateChatList(id, chatList, messageList);
   }
 
+  function handleDelete(id) {
+    let filter = chatList.filter((chat) => chat.id !== id
+    )
+    setChatList(filter);
+  }
+
   return (
     <div >
       <nav className='nav'>
@@ -64,7 +70,8 @@ export default function App(props) {
           })}
 
           <Route path="/chat" element={<ChatList ref={search}
-            onSubmit={handleSubmitChatList} chatList={chatList} />} />
+            onSubmit={handleSubmitChatList}
+            onClick={handleDelete} chatList={chatList} />} />
 
           <Route path="/user" element={<CustomizedList />} />
           <Route path={'*'} element={<NotFound />} />
