@@ -3,6 +3,7 @@ import './App.sass';
 import Form from '../pages/Form';
 import Chatter from '../pages/Chatter';
 import ChatList from '../pages/ChatList';
+import NotFound from '../pages/NotFound';
 import Chat from '../pages/Chat';
 import CustomizedList from '../pages/Profile';
 import User from '../pages/User';
@@ -66,6 +67,8 @@ export default function App(props) {
             onSubmit={handleSubmitChatList} chatList={chatList} />} />
 
           <Route path="/user" element={<CustomizedList />} />
+          <Route path={'*'} element={<NotFound />} />
+
         </Routes>
       </div>
     </div>
