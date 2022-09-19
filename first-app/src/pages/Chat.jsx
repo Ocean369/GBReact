@@ -3,6 +3,7 @@ import Chatter from './Chatter';
 import Form from './Form';
 import { Box, styled } from '@mui/material';
 import { getId, updateMessageList, RobotSay } from './function';
+import { useSelector, useDispatch } from 'react-redux';
 
 
 const CHAT = styled(Box)`
@@ -18,48 +19,14 @@ display: flex;
 `
 
 
-function Chat(props) {
-    const chat = useRef(null);
-    const text = useRef(null);
-
-    const id = props.chat.id;
-    const title = props.chat.name;
-    const user = 'You';
-    const [messageList, setMessageList] = useState(props.chat.messageList);
-
-
-    function handleSubmitForm(e) {
-        e.preventDefault();
-        setMessageList(updateMessageList(messageList, e.target.children[0].value, user));
-        e.target.children[0].value = '';
-    }
-
-    useEffect(() => {
-        if (messageList.length > 0) {
-            if (messageList[messageList.length - 1].user === 'You') {
-                var idTimeOut = setTimeout(() => {
-                    setMessageList(updateMessageList(messageList, RobotSay(), title)); text.current.focus();
-                }
-                    , 1500);
-            }
-            setTimeout(() => {
-                chat.current.scrollTop = chat.current.scrollHeight;
-            }, 0)
-        }
-
-        return () => {
-            clearTimeout(idTimeOut);
-            props.onSubmit(messageList, id);
-
-        }
-    }, [messageList]
-    );
-
+function Chat({ chat }) {
+    const refChat = useRef(null);
+    const refText = useRef(null);
 
     return (
         <CHAT component='div'>
-            <Chatter ref={chat} messageList={messageList} title={title} />
-            <Form ref={text} onSubmit={handleSubmitForm} />
+            <Chatter ref={refChat} chat={chat} />
+            <Form ref={refText} chat={chat} />
         </CHAT>
     )
 }

@@ -12,15 +12,20 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, TextField } from '@mui/material';
 import { Link } from "react-router-dom";
-import Chat from './Chat'
+import Chat from './Chat';
+import { useDispatch, useSelector } from 'react-redux'
 
 
 
 
-function Item(props) {
+function Item({ chat, length, index }) {
+    const dispatch = useDispatch();
+    let path = `/chats/${chat.id}`;
 
-    const { chat, length, index } = props;
-    let path = `/chat/${chat.name.split(/\s+/).join('')}`;
+    function deleteChat(id) {
+        dispatch({ type: 'deleteChat', id: id });
+        dispatch({ type: 'deleteChatMessages', id: id });
+    }
 
     return <>
         <div
@@ -43,7 +48,7 @@ function Item(props) {
                     </ListItemText>
                 </ListItem>
             </Link>
-            <Button onClick={() => props.onClick(chat.id)}
+            <Button onClick={() => deleteChat(chat.id)}
                 sx={{ justifySelf: 'end' }}
             ><DeleteIcon /></Button>
         </div>
@@ -56,14 +61,23 @@ function Item(props) {
 }
 
 const ChatList = React.forwardRef((props, ref) => {
-
-    const chatList = props.chatList;
+    const chatList = useSelector(state => state.chatList);
+    const user = useSelector(state => state.user.name);
+    const dispatch = useDispatch();
     const length = chatList.length;
+    const [newChat, setNewChat] = useState('');
+
+    function addChat(event) {
+        event.preventDefault();
+        if (newChat !== '') {
+            dispatch({ type: 'addChat', newChat: newChat });
+            setNewChat('');
+        }
+    }
 
     return (
-
         <List className='list' sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper', padding: '10px' }}>
-            <Box component='form' onSubmit={props.onSubmit}
+            <Box component='div'
                 sx={{
                     display: 'flex',
                     gap: '10px',
@@ -73,8 +87,9 @@ const ChatList = React.forwardRef((props, ref) => {
                 <Button
                     variant="text"
                     sx={{ width: '20px' }}
-                    type='submit' >
-                    {<AddIcon />}
+
+                >
+                    {<AddIcon onClick={addChat} />}
                 </Button>
                 <TextField
                     ref={ref}
@@ -86,12 +101,14 @@ const ChatList = React.forwardRef((props, ref) => {
                         width: '280px',
                         paddingBottom: '30px'
                     }}
+                    value={newChat}
+                    onChange={(e) => { setNewChat(e.target.value) }}
                 />
             </Box>
 
             {chatList.map((chat, index) => {
                 return <div key={chat.id}>
-                    <Item chat={chat} length={length} index={index} onClick={props.onClick} />
+                    <Item chat={chat} length={length} index={index} />
                 </div>
             })}
         </List>

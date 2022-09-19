@@ -9,7 +9,7 @@ import CustomizedList from '../pages/Profile';
 import User from '../pages/User';
 import { CHATLIST } from './DataList';
 import { Box, styled } from '@mui/material';
-import { getIdChat, updateChatList, createChatList } from '../pages/function';
+import { useSelector, useDispatch } from 'react-redux';
 
 
 
@@ -17,30 +17,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Routes, Route, Link } from "react-router-dom";
 
 
-export default function App(props) {
+export default function App() {
 
-  const [chatList, setChatList] = useState(CHATLIST);
+  const messageList = useSelector(state => state.messageList);
+  const chatList = useSelector(state => state.chatList);
+  const user = useSelector(state => state.user.name);
 
-  const search = useRef(null);
-
-  function handleSubmitChatList(event) {
-    event.preventDefault();
-    let newChat = event.target[1].value;
-    if (newChat !== '') {
-      setChatList(createChatList(newChat, chatList));
-      event.target[1].value = '';
-    }
-  }
-
-  function handleSubmitChat(messageList, id) {
-    updateChatList(id, chatList, messageList);
-  }
-
-  function handleDelete(id) {
-    let filter = chatList.filter((chat) => chat.id !== id
-    )
-    setChatList(filter);
-  }
 
   return (
     <div >
@@ -53,7 +35,7 @@ export default function App(props) {
             <Link to="/user">Профиль</Link>
           </li>
           <li>
-            <Link to="/chat">Chat</Link>
+            <Link to="/chats">Chat</Link>
           </li>
         </ul>
       </nav>
@@ -63,15 +45,12 @@ export default function App(props) {
           <Route path="/" element={<User />} />
 
           {chatList.map(chat => {
-            let path = `/chat/${chat.name.split(/\s+/).join('')}`;
-
+            let path = `/chats/${chat.id}`;
             return <Route path={path} key={chat.id}
-              element={<Chat chat={chat} onSubmit={handleSubmitChat} />} />
+              element={<Chat chat={chat} />} />
           })}
 
-          <Route path="/chat" element={<ChatList ref={search}
-            onSubmit={handleSubmitChatList}
-            onClick={handleDelete} chatList={chatList} />} />
+          <Route path="/chats" element={<ChatList />} />
 
           <Route path="/user" element={<CustomizedList />} />
           <Route path={'*'} element={<NotFound />} />

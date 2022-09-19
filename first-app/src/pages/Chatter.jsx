@@ -1,7 +1,11 @@
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Typography, Box, styled } from '@mui/material';
 import { makeStyles, createStyles } from '@mui/styles';
+import { useSelector } from 'react-redux';
+import { RobotSay } from '../store/messages/selectors';
+import { useDispatch } from 'react-redux';
+
 
 const useStyles = makeStyles(createStyles({
   chat: {
@@ -117,18 +121,27 @@ function WhoSay(props) {
 
 
 
-const Chatter = React.forwardRef((props, ref) => {
-  const List = props.messageList;
-  const title = props.title;
+const Chatter = React.forwardRef(({ chat }, refChat) => {
+
   const classes = useStyles();
+  const messageList = useSelector(state => state.messageList);
+  const user = useSelector(state => state.user.name);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    setTimeout(() => {
+      refChat.current.scrollTop = refChat.current.scrollHeight;
+    }, 0);
+  }, [messageList]);
 
   return <>
     <Typography variant="h3" color="secondary.title">
-      {title}
+      {chat.name}
     </Typography>
-    <Box component='div' className={classes.chat} ref={ref} >
-      {List.map((mess) =>
-        <WhoSay message={mess} key={mess.id} />)}
+    <Box component='div' className={classes.chat} ref={refChat}>
+      {
+        messageList.find(messages => messages.id === chat.id).messages.map((mess) =>
+          <WhoSay message={mess} key={mess.id} />)}
     </Box>
   </>;
 })
