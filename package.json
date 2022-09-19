@@ -1,0 +1,19 @@
+{
+  "name": "firts-project",
+  "version": "1.0.0",
+  "description": "homework1",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ocean369/GBReact.git"
+  },
+  "author": "calibr <awcalibr@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ocean369/GBReact/issues"
+  },
+  "homepage": "https://github.com/Ocean369/GBReact#readme"
+}
