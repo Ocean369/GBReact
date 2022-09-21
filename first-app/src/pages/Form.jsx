@@ -1,22 +1,25 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Button, TextareaAutosize } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import { useDispatch, useSelector } from 'react-redux';
-import { RobotSay } from '../store/messages/selectors';
-
+import { addMessageList, RobotSay } from '../function';
+import { messagesSelector } from '../store/MessagesReducer/selectors';
+import { userNameSelector } from "../store/profile/selectors";
+import { add_message } from "../store/MessagesReducer/actionCreator"
 
 
 const Form = React.forwardRef(({ chat }, ref) => {
-    const messageList = useSelector(state => state.messageList);
-    const user = useSelector(state => state.user.name);
+    const messageList = useSelector(messagesSelector);
+    const user = useSelector(userNameSelector);
     const dispatch = useDispatch();
     const [message, setMessage] = useState('');
     const id = chat.id;
 
     function sendMessage(e) {
         e.preventDefault();
-        dispatch({ type: 'addMessage', message: message, user: user, chat: chat });
+        let newMessList = addMessageList(messageList, message, user, chat);
+        dispatch(add_message(newMessList));
         setMessage('');
     }
 
@@ -26,13 +29,13 @@ const Form = React.forwardRef(({ chat }, ref) => {
         if (messagesChat.length) {
             if (messagesChat[messagesChat.length - 1].isOwner) {
                 setTimeout(() => {
-                    dispatch({ type: 'addMessage', message: RobotSay(), user: chat.name, chat: chat });
+                    let newMessList = addMessageList(messageList, RobotSay(), chat.name, chat);
+                    dispatch(add_message(newMessList));
                     ref.current.focus()
                 }
                     , 1500);
             }
         }
-
     }, [messageList]);
 
     return (

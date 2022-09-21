@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
+import { useParams } from 'react-router';
 import Chatter from './Chatter';
 import Form from './Form';
 import { Box, styled } from '@mui/material';
-import { getId, updateMessageList, RobotSay } from './function';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { chatsSelector } from '../store/ChatsReducer/selectors';
+
 
 
 const CHAT = styled(Box)`
@@ -19,14 +21,16 @@ display: flex;
 `
 
 
-function Chat({ chat }) {
+function Chat() {
     const refChat = useRef(null);
     const refText = useRef(null);
-
+    const { chatId } = useParams();
+    const chatList = useSelector(chatsSelector);
+    const findChat = chatList.find(chat => chat.id === chatId)
     return (
         <CHAT component='div'>
-            <Chatter ref={refChat} chat={chat} />
-            <Form ref={refText} chat={chat} />
+            <Chatter ref={refChat} chat={findChat} />
+            <Form ref={refText} chat={findChat} />
         </CHAT>
     )
 }

@@ -2,9 +2,11 @@
 import React, { useEffect, useRef } from 'react';
 import { Typography, Box, styled } from '@mui/material';
 import { makeStyles, createStyles } from '@mui/styles';
-import { useSelector } from 'react-redux';
-import { RobotSay } from '../store/messages/selectors';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { messagesSelector } from '../store/MessagesReducer/selectors';
+import { userNameSelector } from "../store/profile/selectors";
+
+
 
 
 const useStyles = makeStyles(createStyles({
@@ -124,8 +126,8 @@ function WhoSay(props) {
 const Chatter = React.forwardRef(({ chat }, refChat) => {
 
   const classes = useStyles();
-  const messageList = useSelector(state => state.messageList);
-  const user = useSelector(state => state.user.name);
+  const messageList = useSelector(messagesSelector);
+  const user = useSelector(userNameSelector);
   const dispatch = useDispatch();
 
   useEffect(() => {

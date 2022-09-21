@@ -1,19 +1,23 @@
-// import * as React from 'react';
+
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Divider from '@mui/material/Divider';
 import ListItemText from '@mui/material/ListItemText';
-import { ListItemAvatar, ListItemButton, ListItemIcon } from '@mui/material';
+import { ListItemAvatar } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
-import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, TextField } from '@mui/material';
 import { Link } from "react-router-dom";
-import Chat from './Chat';
 import { useDispatch, useSelector } from 'react-redux'
+import { DELETE_CHAT, DELETE_MESSAGES, ADD_CHAT, CREATE_MESSAGES } from '../store/actionsConstant';
+import { getIdChat, createChatList } from '../function';
+import { chatsSelector } from '../store/ChatsReducer/selectors';
+import { userNameSelector } from "../store/profile/selectors";
+import { delete_messages, create_messages } from "../store/MessagesReducer/actionCreator"
+import { delete_chat, add_chat } from "../store/ChatsReducer/actionCreator"
 
 
 
@@ -23,8 +27,8 @@ function Item({ chat, length, index }) {
     let path = `/chats/${chat.id}`;
 
     function deleteChat(id) {
-        dispatch({ type: 'deleteChat', id: id });
-        dispatch({ type: 'deleteChatMessages', id: id });
+        dispatch(delete_chat(chat.id));
+        dispatch(delete_messages(chat.id));
     }
 
     return <>
@@ -61,8 +65,8 @@ function Item({ chat, length, index }) {
 }
 
 const ChatList = React.forwardRef((props, ref) => {
-    const chatList = useSelector(state => state.chatList);
-    const user = useSelector(state => state.user.name);
+    const chatList = useSelector(chatsSelector);
+    const user = useSelector(userNameSelector);
     const dispatch = useDispatch();
     const length = chatList.length;
     const [newChat, setNewChat] = useState('');
@@ -70,7 +74,10 @@ const ChatList = React.forwardRef((props, ref) => {
     function addChat(event) {
         event.preventDefault();
         if (newChat !== '') {
-            dispatch({ type: 'addChat', newChat: newChat });
+            let id = getIdChat(newChat, chatList);
+            let updateChatList = createChatList(newChat, chatList, id);
+            dispatch(add_chat(updateChatList));
+            dispatch(create_messages(id));
             setNewChat('');
         }
     }

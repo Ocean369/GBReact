@@ -1,28 +1,20 @@
 
 import './App.sass';
-import Form from '../pages/Form';
-import Chatter from '../pages/Chatter';
+
 import ChatList from '../pages/ChatList';
 import NotFound from '../pages/NotFound';
 import Chat from '../pages/Chat';
 import CustomizedList from '../pages/Profile';
 import User from '../pages/User';
-import { CHATLIST } from './DataList';
-import { Box, styled } from '@mui/material';
-import { useSelector, useDispatch } from 'react-redux';
-
-
-
-import React, { useState, useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
+import React, { } from 'react';
 import { Routes, Route, Link } from "react-router-dom";
+import { chatsSelector } from '../store/ChatsReducer/selectors';
 
 
 export default function App() {
 
-  const messageList = useSelector(state => state.messageList);
-  const chatList = useSelector(state => state.chatList);
-  const user = useSelector(state => state.user.name);
-
+  const chatList = useSelector(chatsSelector);
 
   return (
     <div >
@@ -44,11 +36,12 @@ export default function App() {
         <Routes >
           <Route path="/" element={<User />} />
 
-          {chatList.map(chat => {
-            let path = `/chats/${chat.id}`;
-            return <Route path={path} key={chat.id}
-              element={<Chat chat={chat} />} />
-          })}
+          {/* {chatList.map(chat => {
+            let path = `/chats/${chat.id}`; */}
+
+          return <Route path='/chats/:chatId'
+            element={<Chat />} />
+          {/* })} */}
 
           <Route path="/chats" element={<ChatList />} />
 
