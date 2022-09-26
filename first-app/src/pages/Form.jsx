@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Button, TextareaAutosize } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import { useDispatch, useSelector } from 'react-redux';
-import { addMessageList, RobotSay } from '../function';
+import { addMessage, RobotSay } from '../function';
 import { messagesSelector } from '../store/MessagesReducer/selectors';
 import { userNameSelector } from "../store/profile/selectors";
 import { add_message } from "../store/MessagesReducer/actionCreator"
@@ -18,24 +18,13 @@ const Form = React.forwardRef(({ chat }, ref) => {
 
     function sendMessage(e) {
         e.preventDefault();
-        let newMessList = addMessageList(messageList, message, user, chat);
-        dispatch(add_message(newMessList));
+        let newMess = addMessage(messageList, message, user, chat);
+        dispatch(add_message(id, newMess, 2000));
         setMessage('');
     }
 
     useEffect(() => {
-        const find = messageList.find(messages => messages.id === chat.id);
-        const messagesChat = find.messages;
-        if (messagesChat.length) {
-            if (messagesChat[messagesChat.length - 1].isOwner) {
-                setTimeout(() => {
-                    let newMessList = addMessageList(messageList, RobotSay(), chat.name, chat);
-                    dispatch(add_message(newMessList));
-                    ref.current.focus()
-                }
-                    , 1500);
-            }
-        }
+        ref.current.focus()
     }, [messageList]);
 
     return (

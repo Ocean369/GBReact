@@ -12,24 +12,21 @@ export function RobotSay() {
     return speech[n];
 }
 
-export function addMessageList(messageList, message, user, chat) {
-    let isOwner = true;
-    if (user === chat.name) isOwner = false
+export function addMessage(messageList, message, user, chat) {
+    let isOwner = user === chat.name ? false : true;
     let time = new Date();
     let hours = time.getHours();
-    let min = time.getMinutes();
-    let filtered = messageList.filter(messages => { return messages.id === chat.id });
+    let min = time.getMinutes() < 10 ? `0${time.getMinutes()}` : time.getMinutes();
+    let id = getId(messageList.find(messages => messages.id === chat.id).messages);
 
-    let mes = {
-        id: getId(filtered[0].messages),
+    let mess = {
+        id: id,
         user: user,
         text: message,
         time: `${hours}:${min}`,
         isOwner: isOwner
     };
-    filtered[0].messages.push(mes)
-    let mapList = messageList.map(messages => messages.id === chat.id ? filtered[0] : messages)
-    return mapList
+    return mess
 }
 
 export function getIdChat(newChat, list) {
@@ -59,3 +56,4 @@ export function createChatList(newChat, list, id) {
     };
     return [...list, chat]
 }
+
