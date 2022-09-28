@@ -5,16 +5,17 @@ import ChatList from '../pages/ChatList';
 import NotFound from '../pages/NotFound';
 import Chat from '../pages/Chat';
 import CustomizedList from '../pages/Profile';
+import UserFetching from '../pages/UserFetching';
 import User from '../pages/User';
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 import React, { } from 'react';
 import { Routes, Route, Link } from "react-router-dom";
-import { chatsSelector } from '../store/ChatsReducer/selectors';
+// import { chatsSelector } from '../store/ChatsReducer/selectors';
 
 
 export default function App() {
 
-  const chatList = useSelector(chatsSelector);
+  // const chatList = useSelector(chatsSelector);
 
   return (
     <div >
@@ -24,10 +25,13 @@ export default function App() {
             <Link to="/">Home</Link>
           </li>
           <li>
-            <Link to="/user">Профиль</Link>
+            <Link to="/profile">Профиль</Link>
           </li>
           <li>
             <Link to="/chats">Chat</Link>
+          </li>
+          <li>
+            <Link to="/users">Users(fetch)</Link>
           </li>
         </ul>
       </nav>
@@ -39,13 +43,14 @@ export default function App() {
           {/* {chatList.map(chat => {
             let path = `/chats/${chat.id}`; */}
 
-          return <Route path='/chats/:chatId'
+          <Route path='/chats/:chatId'
             element={<Chat />} />
           {/* })} */}
 
           <Route path="/chats" element={<ChatList />} />
 
-          <Route path="/user" element={<CustomizedList />} />
+          <Route path="/profile" element={<CustomizedList />} />
+          <Route path='/users' element={<UserFetching />} />
           <Route path={'*'} element={<NotFound />} />
 
         </Routes>

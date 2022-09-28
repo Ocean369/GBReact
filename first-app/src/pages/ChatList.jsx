@@ -12,12 +12,12 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, TextField } from '@mui/material';
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux'
-import { DELETE_CHAT, DELETE_MESSAGES, ADD_CHAT, CREATE_MESSAGES } from '../store/actionsConstant';
-import { getIdChat, createChatList } from '../function';
+import { getIdChat } from '../function';
 import { chatsSelector } from '../store/ChatsReducer/selectors';
-import { userNameSelector } from "../store/profile/selectors";
+// import { userNameSelector } from "../store/profile/selectors";
 import { delete_messages, create_messages } from "../store/MessagesReducer/actionCreator"
-import { delete_chat, add_chat } from "../store/ChatsReducer/actionCreator"
+import { delete_chat } from "../store/ChatsReducer/actionCreator";
+import { addChatWithThunk } from '../store/ChatsReducer/actionCreator';
 
 
 
@@ -66,7 +66,7 @@ function Item({ chat, length, index }) {
 
 const ChatList = React.forwardRef((props, ref) => {
     const chatList = useSelector(chatsSelector);
-    const user = useSelector(userNameSelector);
+    // const user = useSelector(userNameSelector);
     const dispatch = useDispatch();
     const length = chatList.length;
     const [newChat, setNewChat] = useState('');
@@ -75,8 +75,7 @@ const ChatList = React.forwardRef((props, ref) => {
         event.preventDefault();
         if (newChat !== '') {
             let id = getIdChat(newChat, chatList);
-            let updateChatList = createChatList(newChat, chatList, id);
-            dispatch(add_chat(updateChatList));
+            dispatch(addChatWithThunk({ id: id, name: newChat }));
             dispatch(create_messages(id));
             setNewChat('');
         }

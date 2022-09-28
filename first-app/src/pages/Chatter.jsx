@@ -1,10 +1,10 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { Typography, Box, styled } from '@mui/material';
 import { makeStyles, createStyles } from '@mui/styles';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { messagesSelector } from '../store/MessagesReducer/selectors';
-import { userNameSelector } from "../store/profile/selectors";
+// import { userNameSelector } from "../store/profile/selectors";
 
 
 
@@ -127,8 +127,7 @@ const Chatter = React.forwardRef(({ chat }, refChat) => {
 
   const classes = useStyles();
   const messageList = useSelector(messagesSelector);
-  const user = useSelector(userNameSelector);
-  const dispatch = useDispatch();
+
 
   useEffect(() => {
     setTimeout(() => {

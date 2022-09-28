@@ -2,26 +2,27 @@ import { combineReducers, legacy_createStore as createStore, applyMiddleware, co
 import { chatsReducer } from './ChatsReducer/ChatsRed';
 import { messagesReducer } from './MessagesReducer/MessagesRed';
 import { profileReducer } from './profile/profileReducer';
+import { fetchingReducer } from './UsersFetchingReducer/fetchingReducer';
 import { createLogger } from 'redux-logger'
-import { ADD_CHAT, ADD_MESSAGE } from './actionsConstant';
+import { ADD_MESSAGE } from './actionsConstant';
 import { add_message } from './MessagesReducer/actionCreator';
 import { addMessage, RobotSay } from '../function';
-import { persistStore, persistReducer } from 'redux-persist'
-import storage from 'redux-persist/lib/storage' // defaults to localStorage for web
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import thunk from 'redux-thunk';
+
 
 
 const logger = createLogger({
     collapsed: (getState, action) => action.type === ADD_MESSAGE,
     duration: true,
-    timestamp: false,
-    diff: true
+    timestamp: false
 });
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-
-
-const middleware = store => next => action => {
+//middleware
+const addMessageWithMiddleware = store => next => action => {
     let delayMs = action?.meta;
     if (action.type === ADD_MESSAGE && action.payload.message.isOwner) {
 
@@ -33,7 +34,6 @@ const middleware = store => next => action => {
         }, delayMs);
     }
     return next(action)
-
 }
 
 const config = {
@@ -44,7 +44,8 @@ const config = {
 const rootReducer = combineReducers({
     chats: chatsReducer,
     messages: messagesReducer,
-    user: profileReducer
+    user: profileReducer,
+    fetching: fetchingReducer
 });
 
 const persistedReducer = persistReducer(config, rootReducer)
@@ -55,7 +56,10 @@ const persistedReducer = persistReducer(config, rootReducer)
 export const store = createStore(
     persistedReducer,
     composeEnhancers(
-        applyMiddleware(middleware, logger)
+        applyMiddleware(
+            addMessageWithMiddleware,
+            thunk,
+            logger)
     )
 );
 

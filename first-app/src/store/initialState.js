@@ -26,6 +26,11 @@ const initialState = {
     user: {
         name: 'Anastasia',
         password: 'xxx678678'
+    },
+    fetching: {
+        users: [],
+        loading: false,
+        error: ''
     }
 }
 
