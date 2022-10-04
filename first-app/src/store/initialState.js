@@ -23,9 +23,10 @@ const initialState = {
         id: 'G1',
         messages: []
     }],
-    user: {
-        name: 'Anastasia',
-        password: 'xxx678678'
+    currentUser: {
+        loading: false,
+        error: '',
+        user: null
     },
     fetching: {
         users: [],

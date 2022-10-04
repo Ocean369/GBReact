@@ -1,7 +1,7 @@
 import { combineReducers, legacy_createStore as createStore, applyMiddleware, compose } from 'redux'
 import { chatsReducer } from './ChatsReducer/ChatsRed';
 import { messagesReducer } from './MessagesReducer/MessagesRed';
-import { profileReducer } from './profile/profileReducer';
+import { authentication } from './Authentication/reducer';
 import { fetchingReducer } from './UsersFetchingReducer/fetchingReducer';
 import { createLogger } from 'redux-logger'
 import { ADD_MESSAGE } from './actionsConstant';
@@ -41,10 +41,12 @@ const config = {
     storage,
 }
 
+
+
 const rootReducer = combineReducers({
     chats: chatsReducer,
     messages: messagesReducer,
-    user: profileReducer,
+    authentication: authentication,
     fetching: fetchingReducer
 });
 

@@ -3,15 +3,15 @@ import React, { useState, useEffect } from 'react';
 import { Box, Button, TextareaAutosize } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import { useDispatch, useSelector } from 'react-redux';
-import { addMessage } from '../function';
-import { messagesSelector } from '../store/MessagesReducer/selectors';
-import { userNameSelector } from "../store/profile/selectors";
-import { add_message } from "../store/MessagesReducer/actionCreator"
+import { addMessage } from '../../function';
+import { messagesSelector } from '../../store/MessagesReducer/selectors';
+import { userName } from "../../store/Authentication/selector"
+import { add_message } from "../../store/MessagesReducer/actionCreator"
 
 
 const Form = React.forwardRef(({ chat }, ref) => {
     const messageList = useSelector(messagesSelector);
-    const user = useSelector(userNameSelector);
+    const user = useSelector(userName);
     const dispatch = useDispatch();
     const [message, setMessage] = useState('');
     const id = chat.id;

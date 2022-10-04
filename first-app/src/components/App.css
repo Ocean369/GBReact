@@ -16,7 +16,7 @@
 
 .nav {
   background-color: black;
-  height: 90px;
+  height: 110px;
   padding: 10px;
 }
 
@@ -120,5 +120,67 @@
     -webkit-transform: rotate(360deg);
             transform: rotate(360deg);
   }
+}
+
+.profile {
+  background-color: black;
+  width: 350px;
+  height: 600px;
+  border-radius: 10px;
+  color: orange;
+  padding: 10px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.profile_avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+}
+
+.profile_name {
+  padding-top: 10px;
+}
+
+.profile_email {
+  -ms-flex-item-align: start;
+      align-self: flex-start;
+}
+
+.profile_phone {
+  -ms-flex-item-align: start;
+      align-self: flex-start;
+}
+
+.profile_exit {
+  -ms-flex-item-align: end;
+      align-self: flex-end;
+  width: 30px;
+}
+
+.btn_signup {
+  color: purple;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: end;
+}
+
+.btn_signup:hover {
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.login_error {
+  color: red;
+  font-size: 8px;
 }
 /*# sourceMappingURL=App.css.map */

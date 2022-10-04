@@ -8,7 +8,7 @@
 
 .nav
   background-color: black
-  height: 90px
+  height: 110px
   padding: 10px
 
   & a
@@ -70,3 +70,40 @@
     transform: rotate(0deg)
   100%
     transform: rotate(360deg)
+
+.profile
+  background-color: black
+  width: 350px
+  height: 600px
+  border-radius: 10px
+  color: orange
+  padding: 10px
+  display: flex
+  flex-direction: column
+  align-items: center
+  &_avatar
+    width: 70px
+    height: 70px
+    border-radius: 50%
+  &_name
+    padding-top: 10px
+  &_email
+    align-self: flex-start
+  &_phone
+    align-self: flex-start
+  &_exit
+    align-self: flex-end
+    width: 30px
+
+.btn_signup
+  color: purple
+  font-size: 20px
+  font-weight: bold
+  text-align: end
+  &:hover
+    font-size: 22px
+    cursor: pointer
+
+.login_error
+  color: red
+  font-size: 8px

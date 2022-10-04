@@ -4,7 +4,7 @@ import Chatter from './Chatter';
 import Form from './Form';
 import { Box, styled } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { chatsSelector } from '../store/ChatsReducer/selectors';
+import { chatsSelector } from '../../store/ChatsReducer/selectors';
 
 
 

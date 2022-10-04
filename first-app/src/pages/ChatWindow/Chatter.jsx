@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Typography, Box, styled } from '@mui/material';
 import { makeStyles, createStyles } from '@mui/styles';
 import { useSelector } from 'react-redux';
-import { messagesSelector } from '../store/MessagesReducer/selectors';
+import { messagesSelector } from '../../store/MessagesReducer/selectors';
 // import { userNameSelector } from "../store/profile/selectors";
 
 
