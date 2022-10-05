@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, TextField, Button } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import OutlinedInput from '@mui/material/OutlinedInput';
@@ -11,9 +11,9 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginInitiate } from '../store/Authentication/reducer';
 import { useNavigate } from 'react-router-dom';
-// import { auth } from '../services/firebase';
-import { getAuth } from "firebase/auth";
+import { auth } from '../services/firebase';
 import { error } from '../store/Authentication/selector';
+import { cleanError } from '../store/Authentication/actionCreator';
 
 export default function User() {
     const [email, setEmail] = useState('');
@@ -31,6 +31,15 @@ export default function User() {
         event.preventDefault();
     };
 
+    useEffect(() => {
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                navigation('./chats')
+            } else {
+                dispatch(cleanError());
+            }
+        })
+    }, [])
 
     function login(e) {
         e.preventDefault();
@@ -38,10 +47,7 @@ export default function User() {
             return;
         }
         dispatch(loginInitiate(email, password));
-        const auth = getAuth();
-        const user = auth.currentUser;
-        console.log('login user', user)
-        if (user) { navigation('/chats'); }
+        setTimeout(() => navigation('./chats'), 1000);
     }
 
     return (
@@ -88,7 +94,7 @@ export default function User() {
             </FormControl>
             <div className='login_error'>{err}</div>
             <Button type='submit' variant="contained">Sign IN</Button>
-            <div className='btn_signup' onClick={() => navigation('/signup')}>Registration &#10144;</div>
+            <div className='btn_signup' onClick={() => { dispatch(cleanError()); navigation('/signup') }}>Registration &#10144;</div>
         </Box >
 
 

@@ -6,7 +6,7 @@ import ListItemText from '@mui/material/ListItemText';
 import { ListItemAvatar } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, TextField } from '@mui/material';
@@ -18,6 +18,8 @@ import { chatsSelector } from '../store/ChatsReducer/selectors';
 import { delete_messages, create_messages } from "../store/MessagesReducer/actionCreator"
 import { delete_chat } from "../store/ChatsReducer/actionCreator";
 import { addChatWithThunk } from '../store/ChatsReducer/actionCreator';
+import { getAuth } from "firebase/auth";
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -66,10 +68,19 @@ function Item({ chat, length, index }) {
 
 const ChatList = React.forwardRef((props, ref) => {
     const chatList = useSelector(chatsSelector);
+    const auth = getAuth();
+    const user = auth.currentUser;
     // const user = useSelector(userNameSelector);
     const dispatch = useDispatch();
     const length = chatList.length;
     const [newChat, setNewChat] = useState('');
+    const navigate = useNavigate('');
+
+    useEffect(() => {
+        if (!user)
+            navigate('/');
+    }, []);
+
 
     function addChat(event) {
         event.preventDefault();
@@ -83,6 +94,7 @@ const ChatList = React.forwardRef((props, ref) => {
 
     return (
         <List className='list' sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper', padding: '10px' }}>
+            <img className='btn_profile' src="profile.png" alt="" onClick={() => navigate('/profile')} />
             <Box component='div'
                 sx={{
                     display: 'flex',

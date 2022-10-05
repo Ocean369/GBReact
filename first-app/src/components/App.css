@@ -183,4 +183,14 @@
   color: red;
   font-size: 8px;
 }
+
+.btn_profile {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.btn_profile:hover {
+  cursor: pointer;
+}
 /*# sourceMappingURL=App.css.map */

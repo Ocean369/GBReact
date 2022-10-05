@@ -5,6 +5,8 @@ import Form from './Form';
 import { Box, styled } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { chatsSelector } from '../../store/ChatsReducer/selectors';
+import { useNavigate } from 'react-router-dom';
+import { getAuth } from "firebase/auth";
 
 
 
@@ -27,6 +29,19 @@ function Chat() {
     const { chatId } = useParams();
     const chatList = useSelector(chatsSelector);
     const findChat = chatList.find(chat => chat.id === chatId)
+    const auth = getAuth();
+    const user = auth.currentUser;
+    const navigate = useNavigate('');
+
+    React.useEffect(() => {
+        if (user) {
+
+        } else {
+            navigate('/');
+        }
+
+    }, [])
+
     return (
         <CHAT component='div'>
             <Chatter ref={refChat} chat={findChat} />

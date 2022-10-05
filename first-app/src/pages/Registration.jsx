@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, TextField, Button } from '@mui/material';
 import FormLabel from '@mui/material/FormLabel';
 import { useDispatch, useSelector } from 'react-redux';
-import { registerInitial } from '../store/Authentication/reducer';
+import { loginInitiate, registerInitial } from '../store/Authentication/reducer';
 import IconButton from '@mui/material/IconButton';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
@@ -12,7 +12,8 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useNavigate } from 'react-router-dom';
 import { error } from '../store/Authentication/selector';
-
+import { getAuth } from "firebase/auth";
+import { cleanError } from '../store/Authentication/actionCreator';
 
 export const Registration = () => {
     const [email, setEmail] = useState('');
@@ -20,10 +21,13 @@ export const Registration = () => {
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
     const [passConfirm, setPassConfirm] = useState('');
-    const err = useSelector(error);
+    const signUpError = useSelector(error);
+    const [err, setErr] = useState('');
     const dispatch = useDispatch();
     const [showPassword, setShowPassword] = useState(false);
     const navigation = useNavigate('');
+    const auth = getAuth();
+    const user = auth.currentUser;
 
     const handleClickShowPassword = () => {
         setShowPassword(!showPassword);
@@ -33,14 +37,22 @@ export const Registration = () => {
         event.preventDefault();
     };
 
+    useEffect(() => {
+        if (user) { navigation('/chats') }
+        else { dispatch(cleanError()); }
+    }, [])
 
     function handleSubmit(e) {
         e.preventDefault();
         if (password !== passConfirm) {
             return;
         }
+
         dispatch(registerInitial(name, email, phone, password));
-        setTimeout(() => navigation('/chats'), 1000);
+        setErr(signUpError);
+        if (!err) {
+            setTimeout(() => navigation('/chats'), 1000);
+        }
     }
 
     return (

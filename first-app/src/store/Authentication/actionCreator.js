@@ -60,3 +60,9 @@ export const loginError = (error) => {
         payload: error.toString()
     }
 };
+
+export function cleanError() {
+    return {
+        type: type.CLEAN_ERROR
+    }
+}
