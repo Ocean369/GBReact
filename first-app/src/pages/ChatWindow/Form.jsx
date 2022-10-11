@@ -5,22 +5,27 @@ import SendIcon from '@mui/icons-material/Send';
 import { useDispatch, useSelector } from 'react-redux';
 import { addMessage } from '../../function';
 import { messagesSelector } from '../../store/MessagesReducer/selectors';
-import { userName } from "../../store/Authentication/selector"
-import { add_message } from "../../store/MessagesReducer/actionCreator"
+// import { userName } from "../../store/Authentication/selector"
+import { add_message } from "../../store/MessagesReducer/actionCreator";
+import { getAuth } from "firebase/auth";
 
 
 const Form = React.forwardRef(({ chat }, ref) => {
     const messageList = useSelector(messagesSelector);
-    const user = useSelector(userName);
+    const auth = getAuth();
+    const user = auth.currentUser;
     const dispatch = useDispatch();
     const [message, setMessage] = useState('');
     const id = chat.id;
 
     function sendMessage(e) {
         e.preventDefault();
-        let newMess = addMessage(messageList, message, user, chat);
-        dispatch(add_message(id, newMess, 2000));
-        setMessage('');
+        if (message != '') {
+            let newMess = addMessage(messageList, message, user.displayName, chat);
+            dispatch(add_message(id, newMess, 2000));
+            setMessage('');
+        }
+        ref.current.focus()
     }
 
     useEffect(() => {
@@ -35,7 +40,8 @@ const Form = React.forwardRef(({ chat }, ref) => {
                 display: 'flex',
                 flexDirection: 'row',
                 alignItems: 'center',
-                gap: 1
+                gap: '20px',
+                padding: '0 5px'
             }}
             noValidate
             autoComplete="off"
@@ -53,7 +59,7 @@ const Form = React.forwardRef(({ chat }, ref) => {
             <Button
                 type='submit'
                 variant="contained"
-                sx={{ width: 45 }}>
+                sx={{ width: 35 }}>
                 <SendIcon />
             </Button>
         </Box >

@@ -9,20 +9,6 @@ import { useNavigate } from 'react-router-dom';
 import { getAuth } from "firebase/auth";
 
 
-
-const CHAT = styled(Box)`
-display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  background-color: #fff4df;
-  color: cadetblue;
-  height: 100vh;
-  padding: 20px;
-
-`
-
-
 function Chat() {
     const refChat = useRef(null);
     const refText = useRef(null);
@@ -43,10 +29,10 @@ function Chat() {
     }, [])
 
     return (
-        <CHAT component='div'>
+        <div component='div' className='chat'>
             <Chatter ref={refChat} chat={findChat} />
             <Form ref={refText} chat={findChat} />
-        </CHAT>
+        </div>
     )
 }
 

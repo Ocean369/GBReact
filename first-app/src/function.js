@@ -17,7 +17,7 @@ export function addMessage(messageList, message, user, chat) {
     let time = new Date();
     let hours = time.getHours();
     let min = time.getMinutes() < 10 ? `0${time.getMinutes()}` : time.getMinutes();
-    let id = getId(messageList.find(messages => messages.id === chat.id).messages);
+    let id = getId(messageList[chat.id]);
 
     let mess = {
         id: id,

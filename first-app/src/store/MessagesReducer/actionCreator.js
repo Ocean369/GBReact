@@ -9,10 +9,10 @@ export function add_message(id, message, delayMs = 0) {
     }
 };
 
-export function create_messages(value) {
+export function create_messages(id) {
     return {
         type: CREATE_MESSAGES,
-        payload: value
+        payload: id
     }
 };
 

@@ -16,11 +16,22 @@
     color: white
 
 .list
-  width: 250px
+  width: 300px
   height: 600px
   border-radius: 10px
   border: 2px double grey
   background-color: beige
+  padding: 10px
+  display: flex
+  flex-direction: column
+
+.btn_profile
+  width: 40px
+  height: 40px
+  border-radius: 50%
+  align-self: end
+  &:hover
+    cursor: pointer
 
 .cards
   display: grid
@@ -73,7 +84,7 @@
 
 .profile
   background-color: black
-  width: 350px
+  width: 300px
   height: 600px
   border-radius: 10px
   color: orange
@@ -108,9 +119,27 @@
   color: red
   font-size: 8px
 
-.btn_profile
-  width: 50px
-  height: 50px
-  border-radius: 50%
+.chat
+  width: 300px
+  height: 600px
+  border: 2px double grey
+  background-color: beige
+  border-radius: 10px
+  display: flex
+  flex-direction: column
+  gap: 10px
+  background-color: #fff4df
+  color: cadetblue
+  padding: 5px 0
+
+.chat_title
+  display: flex
+  justify-content: space-between
+  align-items: center
+  padding: 5px 10px
+  height: 40px
+
+.btn_back
+  color: grey
   &:hover
     cursor: pointer

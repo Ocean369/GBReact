@@ -7,7 +7,7 @@ export function add_chat(value) {
     }
 };
 
-export const addChatWithThunk = (obj) => (dispatch, getState) => {
+export const addChatWithThunk = (obj) => (dispatch) => {
     dispatch(add_chat(obj));
 }
 

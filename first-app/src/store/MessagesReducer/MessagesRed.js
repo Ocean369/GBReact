@@ -4,13 +4,23 @@ import { ADD_MESSAGE, DELETE_MESSAGES, CREATE_MESSAGES } from '../actionsConstan
 export const messagesReducer = (state = initialState.messageList, action) => {
     switch (action.type) {
         case ADD_MESSAGE: {
-            return state.map((messages) => messages.id === action.payload.id ? { id: messages.id, messages: [...messages.messages, action.payload.message] } : messages)
+            const obj = {}
+            for (const chat in state) {
+                obj[chat] = chat === action.payload.id ? [...state[chat], action.payload.message] : state[chat];
+            }
+            return obj
+
         }
         case CREATE_MESSAGES: {
-            return [...state, { id: action.payload, messages: [] }]
+            state[action.payload] = []
+            return state
         }
         case DELETE_MESSAGES: {
-            return state.filter((chat) => chat.id !== action.id)
+            const obj = {}
+            for (const chatID in state) {
+                if (chatID !== action.payload) obj[chatID] = state[chatID];
+            }
+            return obj
         }
         default: return state
     }

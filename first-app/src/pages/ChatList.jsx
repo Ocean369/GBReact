@@ -70,7 +70,6 @@ const ChatList = React.forwardRef((props, ref) => {
     const chatList = useSelector(chatsSelector);
     const auth = getAuth();
     const user = auth.currentUser;
-    // const user = useSelector(userNameSelector);
     const dispatch = useDispatch();
     const length = chatList.length;
     const [newChat, setNewChat] = useState('');
@@ -92,9 +91,9 @@ const ChatList = React.forwardRef((props, ref) => {
         }
     }
 
-    return (
-        <List className='list' sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper', padding: '10px' }}>
-            <img className='btn_profile' src="profile.png" alt="" onClick={() => navigate('/profile')} />
+    return (<Box component='div' className='list'>
+        <img className='btn_profile' src="profile.png" alt="" onClick={() => navigate('/profile')} />
+        <List >
             <Box component='div'
                 sx={{
                     display: 'flex',
@@ -116,8 +115,9 @@ const ChatList = React.forwardRef((props, ref) => {
                     type="search"
                     variant="standard"
                     sx={{
-                        width: '280px',
-                        paddingBottom: '30px'
+                        width: '270px',
+                        paddingBottom: '30px',
+                        marginRight: '10px'
                     }}
                     value={newChat}
                     onChange={(e) => { setNewChat(e.target.value) }}
@@ -130,9 +130,7 @@ const ChatList = React.forwardRef((props, ref) => {
                 </div>
             })}
         </List>
-
-
-
+    </Box>
     );
 })
 

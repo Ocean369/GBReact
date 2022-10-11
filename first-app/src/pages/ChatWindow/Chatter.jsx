@@ -4,6 +4,8 @@ import { Typography, Box, styled } from '@mui/material';
 import { makeStyles, createStyles } from '@mui/styles';
 import { useSelector } from 'react-redux';
 import { messagesSelector } from '../../store/MessagesReducer/selectors';
+import Avatar from '@mui/material/Avatar';
+import { useNavigate } from 'react-router-dom';
 // import { userNameSelector } from "../store/profile/selectors";
 
 
@@ -11,9 +13,9 @@ import { messagesSelector } from '../../store/MessagesReducer/selectors';
 
 const useStyles = makeStyles(createStyles({
   chat: {
-    width: '300px',
+    width: '294px',
     height: '500px',
-    border: '2px double grey',
+    // border: '2px double grey',
     borderRadius: '5px',
     backgroundColor: 'rgb(168, 236, 208)',
     display: 'flex',
@@ -127,7 +129,7 @@ const Chatter = React.forwardRef(({ chat }, refChat) => {
 
   const classes = useStyles();
   const messageList = useSelector(messagesSelector);
-
+  const navigate = useNavigate('');
 
   useEffect(() => {
     setTimeout(() => {
@@ -136,13 +138,21 @@ const Chatter = React.forwardRef(({ chat }, refChat) => {
   }, [messageList]);
 
   return <>
-    <Typography variant="h3" color="secondary.title">
-      {chat.name}
-    </Typography>
+    <div className='chat_title'>
+      <div className='btn_back'
+        onClick={() => navigate('/chats')}>&lt; Назад</div>
+      <h3>
+        {chat.name}
+      </h3>
+      <Avatar alt={chat.name} src="/static/images/avatar/1.jpg" />
+
+    </div>
+
     <Box component='div' className={classes.chat} ref={refChat}>
       {
-        messageList.find(messages => messages.id === chat.id).messages.map((mess) =>
-          <WhoSay message={mess} key={mess.id} />)}
+        messageList[chat.id].map((mess) =>
+          <WhoSay message={mess} key={mess.id} />)
+      }
     </Box>
   </>;
 })
