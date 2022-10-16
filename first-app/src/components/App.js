@@ -5,7 +5,6 @@ import ChatList from '../pages/ChatList';
 import NotFound from '../pages/NotFound';
 import Chat from '../pages/ChatWindow/Chat';
 import CustomizedList from '../pages/Profile';
-import UserFetching from '../pages/UserFetching';
 import User from '../pages/Login';
 import { Registration } from '../pages/Registration';
 // import { useSelector } from 'react-redux';
@@ -19,8 +18,6 @@ export default function App() {
 
   const [authed, setAuthed] = useState(false);
 
-
-  // const chatList = useSelector(chatsSelector);
 
   return (
     <div >
@@ -36,9 +33,6 @@ export default function App() {
             <Link to="/chats">Chat</Link>
           </li>
           <li>
-            <Link to="/users">Users(fetch)</Link>
-          </li>
-          <li>
             <Link to="/signup">Registration</Link>
           </li>
         </ul>
@@ -49,12 +43,8 @@ export default function App() {
           <Route path="/" element={<User />} />
           <Route path='/chats/:chatId'
             element={<Chat />} />
-          {/* })} */}
-
           <Route path="/chats" element={<ChatList />} />
-
           <Route path="/profile" element={<CustomizedList />} />
-          <Route path='/users' element={<UserFetching />} />
           <Route path='/signup' element={<Registration />} />
           <Route path={'*'} element={<NotFound />} />
 

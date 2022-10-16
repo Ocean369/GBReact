@@ -2,35 +2,78 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, TextareaAutosize } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
-import { useDispatch, useSelector } from 'react-redux';
-import { addMessage } from '../../function';
-import { messagesSelector } from '../../store/MessagesReducer/selectors';
-// import { userName } from "../../store/Authentication/selector"
-import { add_message } from "../../store/MessagesReducer/actionCreator";
+// import { useDispatch } from 'react-redux';
+import { addMessage, isEmpty, RobotSay } from '../../function';
 import { getAuth } from "firebase/auth";
+import { db } from '../../services/firebase';
 
 
-const Form = React.forwardRef(({ chat }, ref) => {
-    const messageList = useSelector(messagesSelector);
+const Form = React.forwardRef(({ chat, idChat }, ref) => {
+    const { title } = chat;
     const auth = getAuth();
     const user = auth.currentUser;
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
     const [message, setMessage] = useState('');
-    const id = chat.id;
+    const [messages, setMessages] = useState({});
+
+    function updateMessage(idChat, message) {
+        const key = db.ref("messages/" + idChat).push().key;
+        let count = 0;
+        db.ref('chats/' + idChat + '/countMessage/').get()
+            .then((snapshot) => {
+                if (snapshot.exists()) {
+                    count = snapshot.val();
+                } else {
+                    console.log("No data available");
+                }
+            })
+            .then(() => {
+                const updates = {};
+                updates['messages/' + idChat + '/' + key] = message;
+                updates['chats/' + idChat + '/countMessage/'] = count + 1;
+                return db.ref().update(updates);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+
+    }
 
     function sendMessage(e) {
         e.preventDefault();
-        if (message != '') {
-            let newMess = addMessage(messageList, message, user.displayName, chat);
-            dispatch(add_message(id, newMess, 2000));
+        if (message !== '') {
+            let newMess = addMessage(message, user.displayName);
+            updateMessage(idChat, newMess);
             setMessage('');
         }
         ref.current.focus()
     }
 
     useEffect(() => {
+        db.ref('messages/' + idChat).on('value',
+            (snapshot) => {
+                if (snapshot.exists()) {
+                    setMessages(snapshot.val());
+                } else {
+                    console.log("No data available");
+                }
+            },
+            (error) => {
+                console.error('ERROR While processing user snapshot', error);
+            })
+    }, [idChat]);
+
+    useEffect(() => {
+        if (!isEmpty(messages)) {
+            let lastMess = Object.entries(messages).find((element, index, array) => index === array.length - 1);
+            if (lastMess[1].sender === user.displayName) {
+                let newMess = addMessage(RobotSay(), title);
+                setTimeout(() => { updateMessage(idChat, newMess) }, 2500);
+            }
+        }
         ref.current.focus()
-    }, [messageList]);
+    }, [messages]);
+
 
     return (
         <Box

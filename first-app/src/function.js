@@ -1,5 +1,5 @@
-export function getId(List) {
-    return List.length ? List[List.length - 1].id + 1 : 0
+export function getIdMessage(date, chatID) {
+    return `${chatID}-${date}`
 }
 
 export function RobotSay() {
@@ -12,19 +12,16 @@ export function RobotSay() {
     return speech[n];
 }
 
-export function addMessage(messageList, message, user, chat) {
-    let isOwner = user === chat.name ? false : true;
-    let time = new Date();
-    let hours = time.getHours();
-    let min = time.getMinutes() < 10 ? `0${time.getMinutes()}` : time.getMinutes();
-    let id = getId(messageList[chat.id]);
+export function addMessage(message, user) {
+    const timeNow = new Date();
+    console.log(timeNow.getHours());
+    let hours = timeNow.getHours();
+    let min = timeNow.getMinutes() < 10 ? `0${timeNow.getMinutes()}` : timeNow.getMinutes();
 
     let mess = {
-        id: id,
-        user: user,
+        sender: user,
         text: message,
         time: `${hours}:${min}`,
-        isOwner: isOwner
     };
     return mess
 }
@@ -47,5 +44,9 @@ export function getIdChat(newChat, list) {
     }
 }
 
+export function isEmpty(obj) {
+    if (Object.keys(obj).length === 0) return true
+    return false
+}
 
 

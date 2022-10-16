@@ -2,7 +2,6 @@ import { combineReducers, legacy_createStore as createStore, applyMiddleware, co
 import { chatsReducer } from './ChatsReducer/ChatsRed';
 import { messagesReducer } from './MessagesReducer/MessagesRed';
 import { authentication } from './Authentication/reducer';
-import { fetchingReducer } from './UsersFetchingReducer/fetchingReducer';
 import { createLogger } from 'redux-logger'
 import { ADD_MESSAGE } from './actionsConstant';
 import { add_message } from './MessagesReducer/actionCreator';
@@ -47,7 +46,6 @@ const rootReducer = combineReducers({
     chats: chatsReducer,
     messages: messagesReducer,
     authentication: authentication,
-    fetching: fetchingReducer
 });
 
 const persistedReducer = persistReducer(config, rootReducer)
@@ -56,7 +54,7 @@ const persistedReducer = persistReducer(config, rootReducer)
 // window.__REDUX_DEVTOOLS_EXTENSION__());
 
 export const store = createStore(
-    persistedReducer,
+    rootReducer,
     composeEnhancers(
         applyMiddleware(
             addMessageWithMiddleware,
@@ -65,6 +63,6 @@ export const store = createStore(
     )
 );
 
-export const persistor = persistStore(store)
+// export const persistor = persistStore(store)
 
 

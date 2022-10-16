@@ -1,12 +1,10 @@
 
 import React, { useEffect } from 'react';
-import { Typography, Box, styled } from '@mui/material';
+import { Box, styled } from '@mui/material';
 import { makeStyles, createStyles } from '@mui/styles';
-import { useSelector } from 'react-redux';
-import { messagesSelector } from '../../store/MessagesReducer/selectors';
 import Avatar from '@mui/material/Avatar';
 import { useNavigate } from 'react-router-dom';
-// import { userNameSelector } from "../store/profile/selectors";
+import { getAuth } from "firebase/auth";
 
 
 
@@ -99,59 +97,60 @@ const Companion = styled(Box)`
 
 
 
-function WhoSay(props) {
+function WhoSay({ message, index, length }) {
 
-  const { message } = props;
-  const WHO = message.isOwner ? Owner : Companion;
+  const { sender, text, time } = message;
+  const user = getAuth().currentUser.displayName;
+  const isOwner = sender === user ? true : false;
+  const WHO = isOwner ? Owner : Companion;
+
 
   return < WHO component='div' >
 
     <Box component='div' sx={{
       fontSize: '18px',
       color: 'blue',
-      alignSelf: `${message.isOwner ? 'flex-end' : 'flex-start'} `
+      alignSelf: `${isOwner ? 'flex-end' : 'flex-start'} `
     }}
-    >{message.user}</Box>
+    >{sender}</Box>
     <Box component='div' sx={{
       fontSize: '16px',
-    }}> {message.text} </Box>
+    }}> {text} </Box>
     <Box component='div' sx={{
       fontSize: '10px',
       color: 'black',
       alignSelf: 'flex-end'
-    }}>{message.time}</Box>
+    }}>{time}</Box>
   </ WHO >;
 }
 
 
 
-const Chatter = React.forwardRef(({ chat }, refChat) => {
-
+const Chatter = React.forwardRef(({ chat, messages }, refChat) => {
+  const { title, avatar } = chat;
   const classes = useStyles();
-  const messageList = useSelector(messagesSelector);
   const navigate = useNavigate('');
 
   useEffect(() => {
     setTimeout(() => {
       refChat.current.scrollTop = refChat.current.scrollHeight;
     }, 0);
-  }, [messageList]);
+  }, [messages]);
 
   return <>
     <div className='chat_title'>
       <div className='btn_back'
         onClick={() => navigate('/chats')}>&lt; Назад</div>
       <h3>
-        {chat.name}
+        {title}
       </h3>
-      <Avatar alt={chat.name} src="/static/images/avatar/1.jpg" />
-
+      <Avatar alt={title} src={avatar} />
     </div>
-
     <Box component='div' className={classes.chat} ref={refChat}>
       {
-        messageList[chat.id].map((mess) =>
-          <WhoSay message={mess} key={mess.id} />)
+        Object.entries(messages).map(([id, message], index, array) => {
+          return <WhoSay message={message} key={id} index={index} length={array.length} />
+        })
       }
     </Box>
   </>;

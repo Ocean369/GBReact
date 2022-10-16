@@ -11,26 +11,37 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, TextField } from '@mui/material';
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from 'react-redux'
-import { getIdChat } from '../function';
-import { chatsSelector } from '../store/ChatsReducer/selectors';
-// import { userNameSelector } from "../store/profile/selectors";
-import { delete_messages, create_messages } from "../store/MessagesReducer/actionCreator"
-import { delete_chat } from "../store/ChatsReducer/actionCreator";
-import { addChatWithThunk } from '../store/ChatsReducer/actionCreator';
+import { isEmpty } from '../function';
 import { getAuth } from "firebase/auth";
 import { useNavigate } from 'react-router-dom';
+import { db } from '../services/firebase';
 
 
 
 
-function Item({ chat, length, index }) {
-    const dispatch = useDispatch();
-    let path = `/chats/${chat.id}`;
 
-    function deleteChat(id) {
-        dispatch(delete_chat(chat.id));
-        dispatch(delete_messages(chat.id));
+const Item = ({ chat, index, length, userID }) => {
+    const { id, title, avatar } = chat;
+    const path = `/chats/${id}`;
+
+    const deleteChat = (id) => {
+        const updates = {};
+        db.ref('chats/' + id).get()
+            .then((snap) => {
+                if (snap.exists()) {
+                    if (snap.val().countMessage !== 0) {
+                        updates[`messages/${id}`] = null
+                    }
+                } else {
+                    console.log('No data available');
+                }
+            })
+            .then(() => {
+                updates[`/users/${userID}/chats/${id}`] = null;
+                updates[`/chats/${id}`] = null;
+                return db.ref().update(updates);
+            })
+            .catch(e => console.error(e))
     }
 
     return <>
@@ -46,15 +57,15 @@ function Item({ chat, length, index }) {
             }}>
                 <ListItem alignItems="center" >
                     <ListItemAvatar>
-                        <Avatar alt={chat.name} src="/static/images/avatar/l1.jpg" />
+                        <Avatar alt={title} src={avatar} />
                     </ListItemAvatar>
                     <ListItemText
-                        primary={chat.name}
+                        primary={title}
                     >
                     </ListItemText>
                 </ListItem>
             </Link>
-            <Button onClick={() => deleteChat(chat.id)}
+            <Button onClick={() => deleteChat(id)}
                 sx={{ justifySelf: 'end' }}
             ><DeleteIcon /></Button>
         </div>
@@ -63,32 +74,99 @@ function Item({ chat, length, index }) {
                 <Divider variant="inset" component="li" /> : ''}
         </Box>
     </>
-
 }
 
 const ChatList = React.forwardRef((props, ref) => {
-    const chatList = useSelector(chatsSelector);
+    const [chatList, setChatList] = useState({});
+    const [currentU, setCurrentUser] = useState({});
+    const [newChat, setNewChat] = useState('');
     const auth = getAuth();
     const user = auth.currentUser;
-    const dispatch = useDispatch();
-    const length = chatList.length;
-    const [newChat, setNewChat] = useState('');
     const navigate = useNavigate('');
 
     useEffect(() => {
-        if (!user)
-            navigate('/');
+        if (user) {
+            db.ref('users').child(user.uid).on('value', (snapshot) => {
+                try {
+                    if (snapshot.exists()) {
+                        setCurrentUser(snapshot.val());
+                        if (Object.hasOwn(snapshot.val(), 'chats')) {
+                            setChatList(snapshot.val().chats);
+                        } else {
+                            setChatList({});
+                        }
+                    }
+                    else {
+                        console.log("No data available");
+                    }
+                }
+                catch (err) {
+                    console.error('ERROR While processing user snapshot', err)
+                }
+            })
+        } else navigate('/')
     }, []);
 
 
     function addChat(event) {
         event.preventDefault();
         if (newChat !== '') {
-            let id = getIdChat(newChat, chatList);
-            dispatch(addChatWithThunk({ id: id, name: newChat }));
-            dispatch(create_messages(id));
+
+            const key = db.ref('chats').push().key;
+            const updated = {};
+
+            if (Object.hasOwn(currentU, 'chats')) {
+                updated[`users/${user.uid}/chats`] = { ...currentU.chats, [key]: newChat }
+            } else {
+                updated[`users/${user.uid}`] = { ...currentU, chats: { [key]: newChat } };
+            }
+            updated[`chats/${key}`] = { title: newChat, avatar: ' / static / images / avatar / l1.jpg', countMessage: 0 };
+            db.ref().update(updated)
+                .catch(err => {
+                    console.error('ERROR. Data doesn`t write.', err);
+                })
             setNewChat('');
         }
+    }
+
+    if (isEmpty(chatList)) {
+        return (
+            <Box component='div' className='list'>
+                <img className='btn_profile' src="profile.png" alt="" onClick={() => navigate('/profile')} />
+                <List >
+                    <Box component='div'
+                        sx={{
+                            display: 'flex',
+                            gap: '10px',
+                            alignItems: 'center',
+                            justifyContent: 'end'
+                        }}>
+                        <Button
+                            variant="text"
+                            sx={{ width: '20px' }}
+
+                        >
+                            {<AddIcon onClick={addChat} />}
+                        </Button>
+                        <TextField
+                            ref={ref}
+                            id="search"
+                            label="Search"
+                            type="search"
+                            variant="standard"
+                            sx={{
+                                width: '270px',
+                                paddingBottom: '30px',
+                                marginRight: '10px'
+                            }}
+                            value={newChat}
+                            onChange={(e) => { setNewChat(e.target.value) }}
+                        />
+                    </Box>
+
+                </List>
+            </Box>
+        )
     }
 
     return (<Box component='div' className='list'>
@@ -123,12 +201,12 @@ const ChatList = React.forwardRef((props, ref) => {
                     onChange={(e) => { setNewChat(e.target.value) }}
                 />
             </Box>
+            {
+                Object.entries(chatList).map(([idChat, title], index, array) => {
+                    return <Item key={idChat} chat={{ id: idChat, title: title }} index={index} length={array.length} userID={user.uid} />
+                })
+            }
 
-            {chatList.map((chat, index) => {
-                return <div key={chat.id}>
-                    <Item chat={chat} length={length} index={index} />
-                </div>
-            })}
         </List>
     </Box>
     );

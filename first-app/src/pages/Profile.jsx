@@ -6,8 +6,9 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { logOutInitiate } from '../store/Authentication/reducer';
 import { useNavigate } from 'react-router-dom';
-import { user } from '../store/Authentication/selector';
+import { currentUser } from '../store/Authentication/selector';
 import { getAuth } from "firebase/auth";
+import { db } from '../services/firebase';
 
 
 
@@ -22,35 +23,25 @@ export default function CustomizedList() {
     const [photoURL, setPhotoURL] = useState('');
     const [phone, setPhone] = useState('');
 
-    // React.useEffect(() => {
-    //     if (user) {
-    //         console.log(user);
-    //         setName(user.displayName);
-    //         setEmail(user.email);
-    //         setPhone(user.phoneNumber);
-    //         setPhotoURL(user.photoURL);
-    //     } else {
-    //         navigate('/');
-    //     }
-    // }, [])
-
     useEffect(() => {
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                setName(user.displayName);
-                setEmail(user.email);
-                setPhone(user.phoneNumber);
-                setPhotoURL(user.photoURL);
-            } else {
-                navigation('/');
-            }
-        })
+        if (user) {
+            db.ref('users').child(user.uid).on('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    setName(snapshot.val().username);
+                    setEmail(snapshot.val().email);
+                    setPhone(snapshot.val().phone);
+                    setPhotoURL(snapshot.val().profile_picture);
+                }
+            })
+
+        } else {
+            navigation('/');
+        }
     }, [])
 
     const handleExit = () => {
-        if (user) {
+        if (auth.currentUser) {
             dispatch(logOutInitiate());
-            //console.log(currentUser);
             setTimeout(() => navigation('/'), 1000);
         }
     }

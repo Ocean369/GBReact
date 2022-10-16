@@ -2,8 +2,11 @@ import initialState from "../initialState"
 import * as type from '../actionsConstant'
 import * as creator from './actionCreator'
 import { auth } from '../../services/firebase'
-import { usersSelector } from "../UsersFetchingReducer/selectors"
-import { getAuth, updatePhoneNumber, RecaptchaVerifier, PhoneAuthProvider, } from "firebase/auth";
+// import { usersSelector } from "../UsersFetchingReducer/selectors"
+// import { getAuth, updatePhoneNumber, RecaptchaVerifier, PhoneAuthProvider, } from "firebase/auth";
+import { db } from "../../services/firebase";
+
+
 
 
 export const authentication = (state = initialState.currentUser, action) => {
@@ -85,34 +88,56 @@ export const authentication = (state = initialState.currentUser, action) => {
 
 }
 
-export function registerInitial(displayName, email, phone, password) {
+export function writeUserData(userId, name, email, imageUrl, phone) {
+    db.ref('users').child(userId).set({
+        username: name,
+        email: email,
+        phone: phone,
+        profile_picture: imageUrl
+    })
+        .then(() => { console.log('Data writing success') })
+        .catch(err => { console.error(err) })
+}
+
+export function getUserData(userId) {
+    const dbRef = db.ref('users');
+    console.log('entrance getUserData');
+    dbRef.child(userId).get()
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                console.log('getUserData =>', snapshot.val());
+                return { ...snapshot.val() }
+            } else {
+                console.log("No data available");
+                return {}
+            }
+        })
+        .catch((error) => {
+            if (error) {
+                console.error(error);
+                return {}
+            }
+        });
+}
+
+export function registerInitial(displayName, email, phone, password, photoURL) {
     return (dispatch) => {
         dispatch(creator.registrStart());
         auth
             .createUserWithEmailAndPassword(email, password)
-            // .currentUser.updatePhoneNumber()
             .then(({ user }) => {
                 user.updateProfile({
                     displayName: displayName,
-                    photoURL: 'https://upload.wikimedia.org/wikipedia/commons/2/24/Circle-icons-image.svg'
+                    photoURL: photoURL
                 });
+                writeUserData(user.uid,
+                    displayName,
+                    email,
+                    photoURL,
+                    phone);
                 dispatch(creator.registrSuccess(user));
             })
             .catch((e) => dispatch(creator.registrError(e)))
-
-        // 
-        //     const applicationVerifier = new types.RecaptchaVerifier('recaptcha-container');
-        //     const provider = new types.PhoneAuthProvider(auth);
-        //     const verificationId = await provider.verifyPhoneNumber('+16505550101', applicationVerifier);
-        //     const phoneCredential = types.PhoneAuthProvider.credential(verificationId, verificationCode);
-        //     updatePhoneNumber(auth.currentUser, phoneCredential)
-        //         .then(({ user }) => dispatch(creator.registrSuccess(user)))
-        //         .catch((e) => console.log(e))
-        // 
-        // Obtain the verificationCode from the user.
-
-
-
     }
 }
 
@@ -122,11 +147,9 @@ export const loginInitiate = (email, password) => {
         auth
             .signInWithEmailAndPassword(email, password)
             .then(({ user }) => {
-                console.log('use login success');
                 dispatch(creator.loginSuccess(user));
             })
             .catch((e) => {
-                console.log('step1 => loginInitiate => error', e);
                 dispatch(creator.loginError(e))
             })
     }

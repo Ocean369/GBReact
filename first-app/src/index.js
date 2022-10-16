@@ -17,11 +17,11 @@ root.render(
 
   <BrowserRouter>
     <ThemeProvider theme={theme}>
-      <PersistGate loading={null} persistor={persistor}>
-        <Provider store={store}>
-          <App />
-        </Provider>
-      </PersistGate>
+      {/* <PersistGate loading={null} persistor={persistor}> */}
+      <Provider store={store}>
+        <App />
+      </Provider>
+      {/* </PersistGate> */}
     </ThemeProvider>
   </BrowserRouter>
   ,

@@ -25,12 +25,18 @@ export const Registration = () => {
     const [err, setErr] = useState('');
     const dispatch = useDispatch();
     const [showPassword, setShowPassword] = useState(false);
+    const [showPassConfirm, setShowPassConfirm] = useState(false);
     const navigation = useNavigate('');
     const auth = getAuth();
     const user = auth.currentUser;
+    const [photoURL, setPhotoURL] = useState('https://upload.wikimedia.org/wikipedia/commons/2/24/Circle-icons-image.svg');
 
-    const handleClickShowPassword = () => {
+    const handleClickShowPassword = (e) => {
         setShowPassword(!showPassword);
+    };
+
+    const handleClickShowPasswordConfirm = (e) => {
+        setShowPassConfirm(!showPassConfirm);
     };
 
     const handleMouseDownPassword = (event) => {
@@ -39,16 +45,15 @@ export const Registration = () => {
 
     useEffect(() => {
         if (user) { navigation('/chats') }
-        else { dispatch(cleanError()); }
+        else {
+            // dispatch(cleanError()); 
+        }
     }, [])
 
     function handleSubmit(e) {
         e.preventDefault();
-        if (password !== passConfirm) {
-            return;
-        }
-
-        dispatch(registerInitial(name, email, phone, password));
+        if (password !== passConfirm) return;
+        dispatch(registerInitial(name, email, phone, password, photoURL));
         setErr(signUpError);
         if (!err) {
             setTimeout(() => navigation('/chats'), 1000);
@@ -113,13 +118,28 @@ export const Registration = () => {
                     label="Password"
                 />
             </FormControl>
-
-
-            <TextField id="passConfirm"
-                label="Password Confirm"
-                type="password"
-                value={passConfirm}
-                onChange={(e) => setPassConfirm(e.target.value)} />
+            <FormControl variant="outlined">
+                <InputLabel htmlFor="outlined-adornment-password">Password confirm</InputLabel>
+                <OutlinedInput
+                    id="outlined-adornment-password"
+                    type={showPassConfirm ? 'text' : 'password'}
+                    value={passConfirm}
+                    onChange={(e) => setPassConfirm(e.target.value)}
+                    endAdornment={
+                        <InputAdornment position="end">
+                            <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={handleClickShowPasswordConfirm}
+                                onMouseDown={handleMouseDownPassword}
+                                edge="end"
+                            >
+                                {showPassConfirm ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                        </InputAdornment>
+                    }
+                    label="Password confirm"
+                />
+            </FormControl>
             <Box component='div' style={{ fontSize: '10px', color: 'red' }}>{err}</Box>
             <Button type='submit' variant="contained">Зарегистрироваться</Button>
         </Box >
